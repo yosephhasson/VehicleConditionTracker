@@ -1,6 +1,16 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleConditionTracker", "VehicleConditionTracker\VehicleConditionTracker.csproj", "{D030F7B2-1318-42A1-9572-46191973784A}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleConditionTracker", "VehicleConditionTracker/VehicleConditionTracker.csproj", "{D030F7B2-1318-42A1-9572-46191973784A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleConditionTracker.Api", "VehicleConditionTracker/src/VehicleConditionTracker.Api/VehicleConditionTracker.Api.csproj", "{1CDF2136-C1BD-46DF-8C04-7D4CD45C7308}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleConditionTracker.Application", "VehicleConditionTracker/src/VehicleConditionTracker.Application/VehicleConditionTracker.Application.csproj", "{DC54A4D0-F714-45E5-AF1A-EDA348F21578}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleConditionTracker.Domain", "VehicleConditionTracker/src/VehicleConditionTracker.Domain/VehicleConditionTracker.Domain.csproj", "{BDC80F4D-A891-4401-8B89-A68CE05C63A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleConditionTracker.Infrastructure", "VehicleConditionTracker/src/VehicleConditionTracker.Infrastructure/VehicleConditionTracker.Infrastructure.csproj", "{8D070612-04AC-464E-B1F2-C0B0E6E7F1B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +22,21 @@ Global
 		{D030F7B2-1318-42A1-9572-46191973784A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D030F7B2-1318-42A1-9572-46191973784A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D030F7B2-1318-42A1-9572-46191973784A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CDF2136-C1BD-46DF-8C04-7D4CD45C7308}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CDF2136-C1BD-46DF-8C04-7D4CD45C7308}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CDF2136-C1BD-46DF-8C04-7D4CD45C7308}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CDF2136-C1BD-46DF-8C04-7D4CD45C7308}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC54A4D0-F714-45E5-AF1A-EDA348F21578}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC54A4D0-F714-45E5-AF1A-EDA348F21578}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC54A4D0-F714-45E5-AF1A-EDA348F21578}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC54A4D0-F714-45E5-AF1A-EDA348F21578}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDC80F4D-A891-4401-8B89-A68CE05C63A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDC80F4D-A891-4401-8B89-A68CE05C63A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDC80F4D-A891-4401-8B89-A68CE05C63A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDC80F4D-A891-4401-8B89-A68CE05C63A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D070612-04AC-464E-B1F2-C0B0E6E7F1B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D070612-04AC-464E-B1F2-C0B0E6E7F1B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D070612-04AC-464E-B1F2-C0B0E6E7F1B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D070612-04AC-464E-B1F2-C0B0E6E7F1B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
