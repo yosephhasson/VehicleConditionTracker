@@ -1,0 +1,6 @@
+@VehicleConditionTracker_HostAddress = http://localhost:5045
+
+GET {{VehicleConditionTracker_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
