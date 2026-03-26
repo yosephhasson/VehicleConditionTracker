@@ -33,7 +33,9 @@ public class FindingService : IFindingService
             Title = request.Title,
             Description = request.Description,
             Severity = request.Severity,
-            IsResolved = request.IsResolved
+            IsResolved = request.IsResolved,
+            CreatedAtUtc = DateTime.UtcNow,
+            UpdatedAtUtc = DateTime.UtcNow
         };
 
         _dbContext.VehicleFindings.Add(entity);
@@ -54,6 +56,7 @@ public class FindingService : IFindingService
         entity.Description = request.Description;
         entity.Severity = request.Severity;
         entity.IsResolved = request.IsResolved;
+        entity.UpdatedAtUtc = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         return true;

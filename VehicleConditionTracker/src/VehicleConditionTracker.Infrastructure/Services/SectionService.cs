@@ -31,7 +31,9 @@ public class SectionService : ISectionService
             SectionType = request.SectionType,
             Title = request.Title,
             Notes = request.Notes,
-            SortOrder = request.SortOrder
+            SortOrder = request.SortOrder,
+            CreatedAtUtc = DateTime.UtcNow,
+            UpdatedAtUtc = DateTime.UtcNow
         };
 
         _dbContext.VehicleSections.Add(entity);
@@ -51,6 +53,7 @@ public class SectionService : ISectionService
         entity.Title = request.Title;
         entity.Notes = request.Notes;
         entity.SortOrder = request.SortOrder;
+        entity.UpdatedAtUtc = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         return true;

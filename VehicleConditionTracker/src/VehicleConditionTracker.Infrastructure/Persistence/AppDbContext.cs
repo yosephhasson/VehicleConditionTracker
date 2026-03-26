@@ -50,6 +50,8 @@ public class AppDbContext : DbContext
             b.HasKey(x => x.Id);
             b.Property(x => x.Title).IsRequired().HasMaxLength(128);
             b.Property(x => x.SortOrder).HasDefaultValue(0);
+            b.Property(x => x.CreatedAtUtc).IsRequired();
+            b.Property(x => x.UpdatedAtUtc).IsRequired();
             b.HasMany(x => x.Findings)
                 .WithOne(f => f.VehicleSection)
                 .HasForeignKey(f => f.VehicleSectionId)
@@ -65,6 +67,8 @@ public class AppDbContext : DbContext
             b.HasKey(x => x.Id);
             b.Property(x => x.Title).IsRequired().HasMaxLength(128);
             b.Property(x => x.Description).IsRequired().HasMaxLength(2048);
+            b.Property(x => x.CreatedAtUtc).IsRequired();
+            b.Property(x => x.UpdatedAtUtc).IsRequired();
         });
 
         modelBuilder.Entity<VehiclePhoto>(b =>

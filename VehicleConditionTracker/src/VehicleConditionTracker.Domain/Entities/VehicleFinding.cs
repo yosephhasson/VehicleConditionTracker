@@ -11,4 +11,6 @@ public class VehicleFinding : BaseEntity
     public string Description { get; set; } = null!;
     public FindingSeverity Severity { get; set; }
     public bool IsResolved { get; set; }
+    public DateTime CreatedAtUtc { get; set; }
+    public DateTime UpdatedAtUtc { get; set; }
 }
