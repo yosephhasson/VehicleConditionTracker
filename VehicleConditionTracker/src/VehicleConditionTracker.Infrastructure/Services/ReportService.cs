@@ -104,6 +104,7 @@ public class ReportService : IReportService
         var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
         var entity = await _dbContext.VehicleReports
             .Include(r => r.Sections)
+            .Include(r => r.Photos) // ensure photos are tracked for cascade awareness
             .SingleOrDefaultAsync(r => r.Id == id && r.UserId == userId, cancellationToken);
         if (entity is null) return false;
         _dbContext.VehicleReports.Remove(entity);
