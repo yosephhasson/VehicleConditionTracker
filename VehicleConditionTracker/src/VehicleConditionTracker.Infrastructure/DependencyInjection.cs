@@ -10,6 +10,7 @@ using VehicleConditionTracker.Infrastructure.Authentication;
 using VehicleConditionTracker.Infrastructure.Files;
 using VehicleConditionTracker.Infrastructure.Persistence;
 using VehicleConditionTracker.Infrastructure.Pdf;
+using VehicleConditionTracker.Infrastructure.Services;
 
 namespace VehicleConditionTracker.Infrastructure;
 
@@ -20,6 +21,11 @@ public static class DependencyInjection
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<ISectionService, SectionService>();
+        services.AddScoped<IFindingService, FindingService>();
 
         services.AddDbContext<AppDbContext>(options =>
         {

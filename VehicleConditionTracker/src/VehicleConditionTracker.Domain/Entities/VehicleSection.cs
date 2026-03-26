@@ -11,6 +11,8 @@ public class VehicleSection : BaseEntity
     public string Title { get; set; } = null!;
     public string? Notes { get; set; }
     public int SortOrder { get; set; }
+    public DateTime CreatedAtUtc { get; set; }
+    public DateTime UpdatedAtUtc { get; set; }
 
     public ICollection<VehicleFinding> Findings { get; set; } = new List<VehicleFinding>();
     public ICollection<VehiclePhoto> Photos { get; set; } = new List<VehiclePhoto>();
