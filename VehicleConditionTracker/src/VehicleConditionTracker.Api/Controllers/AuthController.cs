@@ -8,28 +8,26 @@ namespace VehicleConditionTracker.Api.Controllers;
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
-    private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IAuthService _authService;
 
-    public AuthController(IJwtTokenGenerator jwtTokenGenerator)
+    public AuthController(IAuthService authService)
     {
-        _jwtTokenGenerator = jwtTokenGenerator;
+        _authService = authService;
     }
 
     [HttpPost("register")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
-    public IActionResult Register([FromBody] RegisterRequestDto request)
+    public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
     {
-        // TODO: implement persistence & hashing
-        var token = _jwtTokenGenerator.GenerateToken(Guid.NewGuid(), request.Email);
-        return Ok(new AuthResponseDto(request.Email, token));
+        var response = await _authService.RegisterAsync(request);
+        return Ok(response);
     }
 
     [HttpPost("login")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
-    public IActionResult Login([FromBody] LoginRequestDto request)
+    public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
     {
-        // TODO: validate credentials
-        var token = _jwtTokenGenerator.GenerateToken(Guid.NewGuid(), request.Email);
-        return Ok(new AuthResponseDto(request.Email, token));
+        var response = await _authService.LoginAsync(request);
+        return Ok(response);
     }
 }

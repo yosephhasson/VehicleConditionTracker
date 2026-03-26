@@ -21,6 +21,7 @@ public class AppDbContext : DbContext
             b.HasKey(x => x.Id);
             b.Property(x => x.Email).IsRequired().HasMaxLength(256);
             b.Property(x => x.PasswordHash).IsRequired();
+            b.HasIndex(x => x.Email).IsUnique();
         });
 
         modelBuilder.Entity<VehicleReport>(b =>
