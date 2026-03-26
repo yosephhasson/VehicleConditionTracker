@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VehicleConditionTracker.Application.Common.Interfaces;
 using VehicleConditionTracker.Application.Dtos.Sections;
 
 namespace VehicleConditionTracker.Api.Controllers;
@@ -9,24 +10,31 @@ namespace VehicleConditionTracker.Api.Controllers;
 [Route("api")]
 public class SectionsController : ControllerBase
 {
-    [HttpPost("reports/{reportId:guid}/sections")]
-    public IActionResult CreateSection(Guid reportId, [FromBody] CreateSectionRequest request)
+    private readonly ISectionService _sectionService;
+
+    public SectionsController(ISectionService sectionService)
     {
-        // TODO: add section to report
-        return StatusCode(StatusCodes.Status201Created);
+        _sectionService = sectionService;
+    }
+
+    [HttpPost("reports/{reportId:guid}/sections")]
+    public async Task<IActionResult> CreateSection(Guid reportId, [FromBody] CreateSectionRequest request)
+    {
+        var ok = await _sectionService.CreateAsync(reportId, request);
+        return ok ? StatusCode(StatusCodes.Status201Created) : NotFound();
     }
 
     [HttpPut("sections/{sectionId:guid}")]
-    public IActionResult UpdateSection(Guid sectionId, [FromBody] UpdateSectionRequest request)
+    public async Task<IActionResult> UpdateSection(Guid sectionId, [FromBody] UpdateSectionRequest request)
     {
-        // TODO: update section
-        return NoContent();
+        var ok = await _sectionService.UpdateAsync(sectionId, request);
+        return ok ? NoContent() : NotFound();
     }
 
     [HttpDelete("sections/{sectionId:guid}")]
-    public IActionResult DeleteSection(Guid sectionId)
+    public async Task<IActionResult> DeleteSection(Guid sectionId)
     {
-        // TODO: delete section
-        return NoContent();
+        var ok = await _sectionService.DeleteAsync(sectionId);
+        return ok ? NoContent() : NotFound();
     }
 }

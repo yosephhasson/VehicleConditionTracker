@@ -1,4 +1,6 @@
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using VehicleConditionTracker.Application.Dtos.Reports.Validators;
 
 namespace VehicleConditionTracker.Application;
 
@@ -6,7 +8,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        // Add validators, mediators, mappers here later
+        services.AddValidatorsFromAssemblyContaining<CreateVehicleReportRequestValidator>();
         return services;
     }
 }

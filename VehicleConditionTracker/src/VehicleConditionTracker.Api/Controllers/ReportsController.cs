@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VehicleConditionTracker.Application.Common.Interfaces;
 using VehicleConditionTracker.Application.Dtos.Reports;
 
 namespace VehicleConditionTracker.Api.Controllers;
@@ -9,41 +10,57 @@ namespace VehicleConditionTracker.Api.Controllers;
 [Route("api/reports")]
 public class ReportsController : ControllerBase
 {
+    private readonly IReportService _reportService;
+
+    public ReportsController(IReportService reportService)
+    {
+        _reportService = reportService;
+    }
+
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<VehicleReportDto>), StatusCodes.Status200OK)]
-    public IActionResult GetReports() => Ok(Array.Empty<VehicleReportDto>());
+    public async Task<IActionResult> GetReports()
+    {
+        var reports = await _reportService.GetAllAsync();
+        return Ok(reports);
+    }
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(VehicleReportDto), StatusCodes.Status200OK)]
-    public IActionResult GetReport(Guid id) => Ok();
+    public async Task<IActionResult> GetReport(Guid id)
+    {
+        var report = await _reportService.GetAsync(id);
+        if (report is null) return NotFound();
+        return Ok(report);
+    }
 
     [HttpPost]
     [ProducesResponseType(typeof(VehicleReportDto), StatusCodes.Status201Created)]
-    public IActionResult Create([FromBody] CreateVehicleReportRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateVehicleReportRequest request)
     {
-        // TODO: implement creation
-        return CreatedAtAction(nameof(GetReport), new { id = Guid.NewGuid() }, null);
+        var created = await _reportService.CreateAsync(request);
+        return CreatedAtAction(nameof(GetReport), new { id = created.Id }, created);
     }
 
     [HttpPut("{id:guid}")]
-    public IActionResult Update(Guid id, [FromBody] UpdateVehicleReportRequest request)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateVehicleReportRequest request)
     {
-        // TODO: implement update
-        return NoContent();
+        var ok = await _reportService.UpdateAsync(id, request);
+        return ok ? NoContent() : NotFound();
     }
 
     [HttpPatch("{id:guid}/status")]
-    public IActionResult UpdateStatus(Guid id, [FromBody] UpdateReportStatusRequest request)
+    public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateReportStatusRequest request)
     {
-        // TODO: update status
-        return NoContent();
+        var ok = await _reportService.UpdateStatusAsync(id, request.Status);
+        return ok ? NoContent() : NotFound();
     }
 
     [HttpDelete("{id:guid}")]
-    public IActionResult Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        // TODO: implement delete
-        return NoContent();
+        var ok = await _reportService.DeleteAsync(id);
+        return ok ? NoContent() : NotFound();
     }
 
     [HttpGet("{id:guid}/pdf")]
