@@ -4,6 +4,7 @@ using VehicleConditionTracker.Application.Common.Interfaces;
 using VehicleConditionTracker.Application.Dtos.Auth;
 using VehicleConditionTracker.Domain.Entities;
 using VehicleConditionTracker.Infrastructure.Persistence;
+using VehicleConditionTracker.Application.Common.Exceptions;
 
 namespace VehicleConditionTracker.Infrastructure.Authentication;
 
@@ -24,7 +25,7 @@ public class AuthService : IAuthService
         var exists = await _dbContext.Users.AnyAsync(u => u.Email == normalizedEmail, cancellationToken);
         if (exists)
         {
-            throw new InvalidOperationException("Email already registered.");
+            throw new ConflictException("Email already registered.");
         }
 
         var hash = BCrypt.Net.BCrypt.HashPassword(request.Password);
@@ -48,13 +49,13 @@ public class AuthService : IAuthService
         var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Email == normalizedEmail, cancellationToken);
         if (user is null)
         {
-            throw new UnauthorizedAccessException("Invalid credentials.");
+            throw new UnauthorizedException("Invalid credentials.");
         }
 
         var valid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
         if (!valid)
         {
-            throw new UnauthorizedAccessException("Invalid credentials.");
+            throw new UnauthorizedException("Invalid credentials.");
         }
 
         var token = _jwtTokenGenerator.GenerateToken(user.Id, user.Email);

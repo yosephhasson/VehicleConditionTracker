@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using VehicleConditionTracker.Application.Common.Exceptions;
 using VehicleConditionTracker.Application.Common.Interfaces;
 using VehicleConditionTracker.Application.Dtos.Reports;
 using VehicleConditionTracker.Domain.Entities;
@@ -21,7 +22,7 @@ public class ReportService : IReportService
 
     public async Task<IEnumerable<VehicleReportDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var userId = _currentUser.UserId ?? throw new UnauthorizedException("User context missing.");
         return await _dbContext.VehicleReports
             .AsNoTracking()
             .Where(r => r.UserId == userId)
@@ -32,7 +33,7 @@ public class ReportService : IReportService
 
     public async Task<VehicleReportDto?> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var userId = _currentUser.UserId ?? throw new UnauthorizedException("User context missing.");
         return await _dbContext.VehicleReports
             .AsNoTracking()
             .Where(r => r.Id == id && r.UserId == userId)
@@ -42,7 +43,7 @@ public class ReportService : IReportService
 
     public async Task<VehicleReportDto> CreateAsync(CreateVehicleReportRequest request, CancellationToken cancellationToken = default)
     {
-        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var userId = _currentUser.UserId ?? throw new UnauthorizedException("User context missing.");
 
         var now = DateTime.UtcNow;
         var entity = new VehicleReport
@@ -69,7 +70,7 @@ public class ReportService : IReportService
 
     public async Task<bool> UpdateAsync(Guid id, UpdateVehicleReportRequest request, CancellationToken cancellationToken = default)
     {
-        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var userId = _currentUser.UserId ?? throw new UnauthorizedException("User context missing.");
         var entity = await _dbContext.VehicleReports.SingleOrDefaultAsync(r => r.Id == id && r.UserId == userId, cancellationToken);
         if (entity is null) return false;
 

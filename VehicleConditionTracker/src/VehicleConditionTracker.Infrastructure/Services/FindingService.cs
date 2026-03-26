@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using VehicleConditionTracker.Application.Common.Exceptions;
 using VehicleConditionTracker.Application.Common.Interfaces;
 using VehicleConditionTracker.Application.Dtos.Findings;
 using VehicleConditionTracker.Domain.Entities;
@@ -19,7 +20,7 @@ public class FindingService : IFindingService
 
     public async Task<bool> CreateAsync(Guid sectionId, CreateFindingRequest request, CancellationToken cancellationToken = default)
     {
-        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var userId = _currentUser.UserId ?? throw new UnauthorizedException("User context missing.");
         var sectionExists = await _dbContext.VehicleSections
             .Include(s => s.VehicleReport)
             .AnyAsync(s => s.Id == sectionId && s.VehicleReport.UserId == userId, cancellationToken);
@@ -42,7 +43,7 @@ public class FindingService : IFindingService
 
     public async Task<bool> UpdateAsync(Guid findingId, UpdateFindingRequest request, CancellationToken cancellationToken = default)
     {
-        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var userId = _currentUser.UserId ?? throw new UnauthorizedException("User context missing.");
         var entity = await _dbContext.VehicleFindings
             .Include(f => f.VehicleSection)
             .ThenInclude(s => s.VehicleReport)
@@ -60,7 +61,7 @@ public class FindingService : IFindingService
 
     public async Task<bool> DeleteAsync(Guid findingId, CancellationToken cancellationToken = default)
     {
-        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var userId = _currentUser.UserId ?? throw new UnauthorizedException("User context missing.");
         var entity = await _dbContext.VehicleFindings
             .Include(f => f.VehicleSection)
             .ThenInclude(s => s.VehicleReport)
