@@ -11,15 +11,20 @@ public class ReportService : IReportService
 {
     private readonly AppDbContext _dbContext;
 
-    public ReportService(AppDbContext dbContext)
+    private readonly ICurrentUserService _currentUser;
+
+    public ReportService(AppDbContext dbContext, ICurrentUserService currentUser)
     {
         _dbContext = dbContext;
+        _currentUser = currentUser;
     }
 
     public async Task<IEnumerable<VehicleReportDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
+        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
         return await _dbContext.VehicleReports
             .AsNoTracking()
+            .Where(r => r.UserId == userId)
             .OrderByDescending(r => r.CreatedAtUtc)
             .Select(r => new VehicleReportDto(r.Id, r.Vin, r.Year, r.Make, r.Model, r.Mileage, r.Color, r.InspectorNotes, r.Status, r.CreatedAtUtc, r.UpdatedAtUtc))
             .ToListAsync(cancellationToken);
@@ -27,20 +32,23 @@ public class ReportService : IReportService
 
     public async Task<VehicleReportDto?> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
+        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
         return await _dbContext.VehicleReports
             .AsNoTracking()
-            .Where(r => r.Id == id)
+            .Where(r => r.Id == id && r.UserId == userId)
             .Select(r => new VehicleReportDto(r.Id, r.Vin, r.Year, r.Make, r.Model, r.Mileage, r.Color, r.InspectorNotes, r.Status, r.CreatedAtUtc, r.UpdatedAtUtc))
             .SingleOrDefaultAsync(cancellationToken);
     }
 
     public async Task<VehicleReportDto> CreateAsync(CreateVehicleReportRequest request, CancellationToken cancellationToken = default)
     {
+        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+
         var now = DateTime.UtcNow;
         var entity = new VehicleReport
         {
             Id = Guid.NewGuid(),
-            UserId = Guid.Empty, // TODO: replace with authenticated user id
+            UserId = userId,
             Vin = request.Vin,
             Year = request.Year,
             Make = request.Make,
@@ -61,7 +69,8 @@ public class ReportService : IReportService
 
     public async Task<bool> UpdateAsync(Guid id, UpdateVehicleReportRequest request, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.VehicleReports.SingleOrDefaultAsync(r => r.Id == id, cancellationToken);
+        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var entity = await _dbContext.VehicleReports.SingleOrDefaultAsync(r => r.Id == id && r.UserId == userId, cancellationToken);
         if (entity is null) return false;
 
         entity.Vin = request.Vin;
@@ -80,7 +89,8 @@ public class ReportService : IReportService
 
     public async Task<bool> UpdateStatusAsync(Guid id, ReportStatus status, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.VehicleReports.SingleOrDefaultAsync(r => r.Id == id, cancellationToken);
+        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var entity = await _dbContext.VehicleReports.SingleOrDefaultAsync(r => r.Id == id && r.UserId == userId, cancellationToken);
         if (entity is null) return false;
         entity.Status = status;
         entity.UpdatedAtUtc = DateTime.UtcNow;
@@ -90,7 +100,10 @@ public class ReportService : IReportService
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.VehicleReports.Include(r => r.Sections).SingleOrDefaultAsync(r => r.Id == id, cancellationToken);
+        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var entity = await _dbContext.VehicleReports
+            .Include(r => r.Sections)
+            .SingleOrDefaultAsync(r => r.Id == id && r.UserId == userId, cancellationToken);
         if (entity is null) return false;
         _dbContext.VehicleReports.Remove(entity);
         await _dbContext.SaveChangesAsync(cancellationToken);

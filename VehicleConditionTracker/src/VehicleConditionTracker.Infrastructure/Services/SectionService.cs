@@ -9,15 +9,18 @@ namespace VehicleConditionTracker.Infrastructure.Services;
 public class SectionService : ISectionService
 {
     private readonly AppDbContext _dbContext;
+    private readonly ICurrentUserService _currentUser;
 
-    public SectionService(AppDbContext dbContext)
+    public SectionService(AppDbContext dbContext, ICurrentUserService currentUser)
     {
         _dbContext = dbContext;
+        _currentUser = currentUser;
     }
 
     public async Task<bool> CreateAsync(Guid reportId, CreateSectionRequest request, CancellationToken cancellationToken = default)
     {
-        var exists = await _dbContext.VehicleReports.AnyAsync(r => r.Id == reportId, cancellationToken);
+        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var exists = await _dbContext.VehicleReports.AnyAsync(r => r.Id == reportId && r.UserId == userId, cancellationToken);
         if (!exists) return false;
 
         var entity = new VehicleSection
@@ -37,7 +40,10 @@ public class SectionService : ISectionService
 
     public async Task<bool> UpdateAsync(Guid sectionId, UpdateSectionRequest request, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.VehicleSections.SingleOrDefaultAsync(s => s.Id == sectionId, cancellationToken);
+        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var entity = await _dbContext.VehicleSections
+            .Include(s => s.VehicleReport)
+            .SingleOrDefaultAsync(s => s.Id == sectionId && s.VehicleReport.UserId == userId, cancellationToken);
         if (entity is null) return false;
 
         entity.SectionType = request.SectionType;
@@ -51,7 +57,10 @@ public class SectionService : ISectionService
 
     public async Task<bool> DeleteAsync(Guid sectionId, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.VehicleSections.SingleOrDefaultAsync(s => s.Id == sectionId, cancellationToken);
+        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var entity = await _dbContext.VehicleSections
+            .Include(s => s.VehicleReport)
+            .SingleOrDefaultAsync(s => s.Id == sectionId && s.VehicleReport.UserId == userId, cancellationToken);
         if (entity is null) return false;
 
         _dbContext.VehicleSections.Remove(entity);

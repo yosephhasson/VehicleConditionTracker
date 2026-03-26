@@ -9,15 +9,20 @@ namespace VehicleConditionTracker.Infrastructure.Services;
 public class FindingService : IFindingService
 {
     private readonly AppDbContext _dbContext;
+    private readonly ICurrentUserService _currentUser;
 
-    public FindingService(AppDbContext dbContext)
+    public FindingService(AppDbContext dbContext, ICurrentUserService currentUser)
     {
         _dbContext = dbContext;
+        _currentUser = currentUser;
     }
 
     public async Task<bool> CreateAsync(Guid sectionId, CreateFindingRequest request, CancellationToken cancellationToken = default)
     {
-        var sectionExists = await _dbContext.VehicleSections.AnyAsync(s => s.Id == sectionId, cancellationToken);
+        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var sectionExists = await _dbContext.VehicleSections
+            .Include(s => s.VehicleReport)
+            .AnyAsync(s => s.Id == sectionId && s.VehicleReport.UserId == userId, cancellationToken);
         if (!sectionExists) return false;
 
         var entity = new VehicleFinding
@@ -37,7 +42,11 @@ public class FindingService : IFindingService
 
     public async Task<bool> UpdateAsync(Guid findingId, UpdateFindingRequest request, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.VehicleFindings.SingleOrDefaultAsync(f => f.Id == findingId, cancellationToken);
+        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var entity = await _dbContext.VehicleFindings
+            .Include(f => f.VehicleSection)
+            .ThenInclude(s => s.VehicleReport)
+            .SingleOrDefaultAsync(f => f.Id == findingId && f.VehicleSection.VehicleReport.UserId == userId, cancellationToken);
         if (entity is null) return false;
 
         entity.Title = request.Title;
@@ -51,7 +60,11 @@ public class FindingService : IFindingService
 
     public async Task<bool> DeleteAsync(Guid findingId, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.VehicleFindings.SingleOrDefaultAsync(f => f.Id == findingId, cancellationToken);
+        var userId = _currentUser.UserId ?? throw new UnauthorizedAccessException("User context missing.");
+        var entity = await _dbContext.VehicleFindings
+            .Include(f => f.VehicleSection)
+            .ThenInclude(s => s.VehicleReport)
+            .SingleOrDefaultAsync(f => f.Id == findingId && f.VehicleSection.VehicleReport.UserId == userId, cancellationToken);
         if (entity is null) return false;
 
         _dbContext.VehicleFindings.Remove(entity);
