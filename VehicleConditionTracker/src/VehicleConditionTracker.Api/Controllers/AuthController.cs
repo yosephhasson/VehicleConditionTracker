@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using VehicleConditionTracker.Application.Common.Interfaces;
 using VehicleConditionTracker.Application.Dtos.Auth;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace VehicleConditionTracker.Api.Controllers;
 
@@ -29,5 +31,18 @@ public class AuthController : ControllerBase
     {
         var response = await _authService.LoginAsync(request);
         return Ok(response);
+    }
+
+    [HttpGet("me")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    public IActionResult Me()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        var email = User.FindFirstValue(ClaimTypes.Email) ?? User.FindFirstValue(JwtRegisteredClaimNames.Email);
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+        return Ok(new { userId, email });
     }
 }
