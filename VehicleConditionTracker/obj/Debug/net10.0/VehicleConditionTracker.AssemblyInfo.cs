@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VehicleConditionTracker")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d65a76a38a35b9af3ca22a23e1cfb53c7e27f02c")]
 [assembly: System.Reflection.AssemblyProductAttribute("VehicleConditionTracker")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VehicleConditionTracker")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
