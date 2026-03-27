@@ -3,6 +3,7 @@ using VehicleConditionTracker.Application.Common.Interfaces;
 using VehicleConditionTracker.Application.Dtos.Auth;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VehicleConditionTracker.Api.Controllers;
 
@@ -33,6 +34,7 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize]
     [HttpGet("me")]
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     public IActionResult Me()
